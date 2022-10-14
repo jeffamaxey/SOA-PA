@@ -1,4 +1,8 @@
 # Predictive Analytics in R
+<script
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+  type="text/javascript">
+</script>
 
 <div align="center">
 <!-- <h1 align="center" style="display: block; font-size: 2.5em; font-weight: bold; margin-block-start: 1em; margin-block-end: 1em;">
@@ -145,15 +149,25 @@ ggplot(resid, aes(x = model.residuals)) +
 ```
 
 **Problems with OLS Model**  
-1. Not appropriate when:
-  * The range of target variable values is positive. The normal distribution allows for negative values and hence the model may predict negative outcomes.
-  * The variance of the target depends on the mean. This violates the constant variance assumption.
-  * The target variable is binary. The restriction to 0 and 1 responses does not fit normal distribution.
 
-2. Other Limitations:
-  * Sensitive to outliers
-  * By definition, they do not perform well with non-linear relations.
+1. Not appropriate when:  
+  -  The range of target variable values is positive. The normal distribution allows for negative values and hence the model may predict negative outcomes.
+  -  The variance of the target depends on the mean. This violates the constant variance assumption.
+  -  The target variable is binary. The restriction to 0 and 1 responses does not fit normal distribution.
+2. Other Limitations:  
+  -  Sensitive to outliers  
+  -  By definition, they do not perform well with non-linear relations.  
 
+
+### 1.2 Generalized Linear Models Specifications and Assumptions 
+The generalized assumptions are:
+* Given the predictor variable values, the target variables are independent
+* Given the predictor variable values, the target variable's distribution is a member of the exponential family.
+* Given the predictor variable values, the expected value of the target variables is:
+
+  > $$\mu = {g^-1(\nu)}, {\nu = X\beta}$$ 
+  > 
+  > Where g is called the **link function**
 
 ---
 
