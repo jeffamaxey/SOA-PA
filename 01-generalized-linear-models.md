@@ -854,4 +854,235 @@ predictions <- cbind(model.pred, model.pred.odp)
 predictions
 ```
 
+### Continous Positive-Value Data
+In insurance applications, it is common to measure quanities that are strictly positive. May be sufficient to a log transformation of the variable. However, it may be useful to use a regression model particularly suited to positive-valued data.
 
+Three common examples are the gamma, lognormal, and inverse gaussian distributions. These would generally be used with a log link function to ensure positive predictions.
+
+Another possibility is a normal distribution with a log link function. TThe predictions of the mean for new observations will always be positive.
+
+**Tweedie Distribution**
+Compound Poisson and Gamma Distribution. As an example, supplose a single drive has $N$ claims in a year where $N ~ Poisson(\lambda)$ and each claim $X_1,...,X_N$ has a gamma distribution with parameters $\alpha$ and $\beta$. The total claims are then $S = X_1 + ... + X_N$ and they have a Tweedie distribution. The mean and variance are the following:
+
+$$\mu = \lambda*\alpha/\beta, \sigma^2 = \lambda\alpha(\alpha+1)/\beta^2$$
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+
+data.all <- read.csv("AutoClaim.csv")
+
+data.all <- data.all %>% 
+  dplyr::select(c('GENDER', 'AGE', 'BLUEBOOK', 'CLM_AMT')) %>% 
+  filter(CLM_AMT > 0) %>%
+  mutate(
+    AGE_BAND = cut(x=AGE, breaks=c(0, 25, 35, 45, 55, 65, 85)),
+    AGE = NULL
+  )
+
+comma_format <- function(x){
+  x <- format(x, nsmall=0, scientific=FALSE, big.mark=",")
+  return(x)
+} 
+
+p <- ggplot(data=data.all) 
+
+p1 <- p + 
+  geom_density(aes(x=CLM_AMT), fill='blue', alpha=0.2) + 
+  geom_histogram(aes(x=CLM_AMT, ..density..), fill = "grey50", alpha = 0.5) +
+  scale_x_continuous(labels=x_format) + 
+  labs(x="Claim Amount ($)", y="Density", title="Claim Amount",
+       subtitle="Distribution (Density Plot)", caption="Source: Auto Claim") 
+p2 <- p + 
+  geom_density(aes(x=CLM_AMT), fill='blue', alpha=0.2) + 
+  geom_histogram(aes(x=CLM_AMT, ..density..), fill = "grey50", alpha = 0.5) +
+  scale_x_log10(labels=x_format) + 
+  labs(x="Log Claim Amount ($)", y="Density", title="Log Claim Amount",
+       subtitle="Distribution (Density Plot)", caption="Source: Auto Claim") 
+p3 <- p + 
+  geom_boxplot(aes(x="Claim Amount", y=CLM_AMT))
+  labs(x="Log Claim Amount ($)", y="Density", title="Log Claim Amount",
+       subtitle="Distribution (Box Plot)", caption="Source: Auto Claim") 
+p4 <- p + 
+  geom_boxplot(aes(x="Claim Amount", y=CLM_AMT)) + 
+  scale_y_log10(labels=x_format)
+  labs(x="Log Claim Amount ($)", y="Box Plot", title="Log Claim Amount",
+       subtitle="Distribution (Box Plot)", caption="Source: Auto Claim") 
+
+grid.arrange(p1, p2, p3, p4, ncol=2)
+
+
+data.all$logCLM_AMT <- log(data.all$CLM_AMT)
+
+model1.fit <- lm(CLM_AMT~GENDER+AGE_BAND+BLUEBOOK, data=data.all)
+model2.fit <- lm(logCLM_AMT~GENDER+AGE_BAND+BLUEBOOK, data=data.all)
+model3.fit <- glm(CLM_AMT ~ GENDER + AGE_BAND + BLUEBOOK, data=data.all, family=Gamma(link="log"))
+
+model1.pred <- predict(model1.fit)
+model2.pred <- predict(model2.fit)
+model3.pred <- predict(model3.fit, type = "response")
+
+# Which model performs the best?
+model1.sse = sum((data.all$CLM_AMT - model1.pred)^2)
+model2.sse = sum((data.all$CLM_AMT - exp(model2.pred))^2)
+model3.sse = sum((data.all$CLM_AMT - model3.pred)^2)
+data.frame(
+  model=c("Linear Model", "Linear Model (Log Target)", "GLM Gamma with log link"),
+  sse = c(model1.sse, model2.sse, model3.sse)
+)
+
+```
+
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+
+data.all <- read.csv("AutoClaim.csv")
+
+data.all <- data.all %>% 
+  dplyr::select(c('GENDER', 'AGE', 'BLUEBOOK', 'CLM_FREQ5')) %>% 
+  mutate(
+    AGE_BAND = cut(x=AGE, breaks=c(0, 25, 35, 45, 55, 65, 85)),
+    AGE = NULL
+  )
+
+
+# Normal linear regression model with Identity Link
+model1.fit <- glm(CLM_FREQ5 ~ ., data=data.all)
+model1.pred <- predict(model1.fit, type='response')
+model1.sse <- sum((data.all$CLM_FREQ5 - model1.pred)^2)
+
+# Poisson regression model with Identity Link
+model2.fit <- glm(CLM_FREQ5 ~ ., data=data.all, family=poisson(link="log"))
+model2.pred <- predict(model2.fit, type='response')
+model2.sse <- sum((data.all$CLM_FREQ5 - model2.pred)^2)
+
+# Summary
+data.frame(
+  model=c("Normal Linear Model w/ Identity Link", "Poisson Regression with Log Link"),
+  sse=c(model1.sse, model2.sse)
+)
+
+# Performance is similar. Although the normal model 
+# has the potential to predict negative values, it 
+# turns out that the minimum prediction is 0.48 claims.
+min(model1.pred)
+
+```
+
+### Feature Generation
+
+**Variable:** Represents the predictors in our models. Variables are more closely associated with raw data, which makes up part of the datasets before any transformation takes place.
+
+**Feature:** Derivations from the original variables or final inputs into the model. 
+
+```{r}
+library(tidyverse)
+
+data.mortality <- read.csv("soa_mortality_data.csv")
+
+data.mortality <- data.mortality %>% 
+  filter(exposure_face > 0) %>% 
+  mutate(
+    actual_q = actual_face / exposure_face
+  )
+
+
+nrow(data.mortality)
+summary(data.mortality)
+
+data.mortality %>% 
+  select_if(is.numeric) %>%
+  gather(feature,value) %>%
+  ggplot(aes(value)) +
+  geom_histogram() +
+  facet_wrap(vars(feature))
+
+# Log transform example
+data.mortality$duration_log <- log(data.mortality$duration)
+
+# Normalization
+data.mortality$issage_norm <- scale(data.mortality$issage)
+
+# Binned versions of variables example
+data.mortality$issage_bin10 <- cut(data.mortality$issage, 10)
+data.mortality$issage_bin20 <- cut(data.mortality$issage, 20, labels = FALSE) # Note the difference between using labels or not
+
+vars.bin <- c("sex", "smoker", "prodcat", "region", "distchan", "uwkey", "uwtype", "resind_ind")
+dummies <- dummyVars(survived ~ ., data = etitanic)
+
+data.mortality <- data.mortality %>% 
+  select(sex, smoker, prodcat, region, distchan, uwkey, uwtype, resind_ind)) %>% 
+  mutate(sapply(., as.character))
+
+
+library(caret)
+
+# List the variables we want to binarize
+vars.bin <- c("sex", "smoker", "prodcat", "region", "distchan", "uwkey", "uwtype", "resind_ind")
+
+
+
+```
+
+
+### GLM Variable Selection
+
+**Forward Stepwise Selection:**
+
+1. Start with no predictors in the model;
+2. Evaluate all p models which use only one predictor and choose the one with the best performance (Highest $R^2$ or Lowest $RSS$);
+3. Repeat the process when adding one additional predictor, and continue until there is a model with one predictor, a model with two predictors, a model with three predictors, and so forth until there are p models;
+4. Select the single best model which has the best $AIC$, $BIC$, or $Adjusted R^2$
+
+**Backward Stepwise Selection:**
+
+1. Start with a model that contains all predictors;
+2. Create a model which removes all predictors;
+3. Choose the best model which removes all-but-one predictor;
+4. Choose the best model which removes all-but-two predictors;
+5. Continue until there are p models;
+6. Select the single best model which has the best $AIC$, $BIC$, or $Adjusted R^2$
+
+**Both Forward & Backward Selection:** 
+
+A hybrid approach is to consider using both forward and backward selection. This is done by creating two lists of variables at each step, one from forward and backward selection. `stepAIC()` 
+
+| Metric | Formula | Interpretation
+----------------------------------------------------
+Residual Mean Sq Error	| $sqrt(\sigma(y_hat-y_i)^2)$ | Lower = Better
+Mean Absolute Error	| $sqrt(\sigma(y_hat-y_i)^2)$ | Lower = Better
+R-Squared | % of variation in the response that is explained by the model. Higher = Better
+AIC | | Log Likelihood with penality for complexity | Lower = Better
+BIC | | Log Likelihood with penality for complexity and sample size | Lower = Better
+Pearson's Chi Sq | | Used when target is count, Lower = Better| 
+
+
+AIC: Lower = Better
+
+
+```{r}
+library(MASS)
+stepAIC() 
+
+glm <- glm(formula, data, family)
+AIC(glm)
+```
+
+* Elastic Net/Lasso/Ridge Advantages
+
+All benefits from GLMS
+Automatic variable selection for Lasso; smaller coefficients for Ridge
+Better predictive power than GLM
+Elastic Net/Lasso/Ridge Disadvantages
+
+All cons of GLMs
+```{r}
+
+
+```
