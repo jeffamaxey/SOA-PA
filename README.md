@@ -144,15 +144,15 @@ ggplot(resid, aes(x = model.residuals)) +
 
 ```
 
-** Problems with OLS Model**
-Not appropriate when:
-* The range of target variable values is positive. The normal distribution allows for negative values and hence the model may predict negative outcomes.
-* The variance of the target depends on the mean. This violates the constant variance assumption.
-* The target variable is binary. The restriction to 0 and 1 responses does not fit normal distribution.
+**Problems with OLS Model**  
+1. Not appropriate when:
+  * The range of target variable values is positive. The normal distribution allows for negative values and hence the model may predict negative outcomes.
+  * The variance of the target depends on the mean. This violates the constant variance assumption.
+  * The target variable is binary. The restriction to 0 and 1 responses does not fit normal distribution.
 
-Other Limitations:
-* Sensitive to outliers
-* By definition, they do not perform well with non-linear relations.
+2. Other Limitations:
+  * Sensitive to outliers
+  * By definition, they do not perform well with non-linear relations.
 
 
 ---
