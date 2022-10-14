@@ -1057,14 +1057,37 @@ A hybrid approach is to consider using both forward and backward selection. This
 ----------------------------------------------------
 Residual Mean Sq Error	| $sqrt(\sigma(y_hat-y_i)^2)$ | Lower = Better
 Mean Absolute Error	| $sqrt(\sigma(y_hat-y_i)^2)$ | Lower = Better
-R-Squared | % of variation in the response that is explained by the model. Higher = Better
-AIC | | Log Likelihood with penality for complexity | Lower = Better
-BIC | | Log Likelihood with penality for complexity and sample size | Lower = Better
-Pearson's Chi Sq | | Used when target is count, Lower = Better| 
+R-Squared | . Higher = Better
+AIC | |  | Lower = Better
+BIC | | | Lower = Better
+Pearson's Chi Sq | | , Lower = Better| 
+
+| Metric  | Description        |   |   |
+|---------|--------------------|---|---|
+| RMSE    | Lower = Better     | Predicts to mean  |
+| MAE     | Lower = Better     | Predicts to median  |
+| $R^2$   | Higher = Better    | % of variation in the response that is explained by the model  |   |
+| AIC     | Lower = Better     | Log Likelihood with penality for complexity  |
+| BIC     | Lower = Better     | Log Likelihood with penality for complexity and sample size   |
+| Pearson | **Lower = Better** | Used when target is count |
 
 
-AIC: Lower = Better
+```{r}
+get_rmse <- function(y, y_hat){
+  sqrt(mean((y - y_hat)^2))
+}
 
+get_mae <- function(y, y_hat){
+  sqrt(mean(abs(y - y_hat)))
+}
+
+# Is there a pattern in the residuals? If there is, this means that the model is missing key information.
+plot(model, which = 1)
+
+# The normal QQ shows how well the quantiles of the predictions fit a theoretical normal distribution. 
+plot(model, which = 2)
+
+```
 
 ```{r}
 library(MASS)
@@ -1074,15 +1097,357 @@ glm <- glm(formula, data, family)
 AIC(glm)
 ```
 
-* Elastic Net/Lasso/Ridge Advantages
+**Elastic Net/Lasso/Ridge Advantages**  
 
-All benefits from GLMS
-Automatic variable selection for Lasso; smaller coefficients for Ridge
-Better predictive power than GLM
-Elastic Net/Lasso/Ridge Disadvantages
+1. All benefits from GLMS
+2. Automatic variable selection for Lasso; smaller coefficients for Ridge
+3. Better predictive power than GLM
 
-All cons of GLMs
+### Elastic Net/Lasso/Ridge
+
+1. All cons of GLMs
+
 ```{r}
+# Ridge and Lasso
+x <- model.matrix(Salary~., Hitters)[,-1] 
+y <- df %>% 
+  select(target) %>%
+  unlist() %>%
+  as.numeric()
+
+#alpha = 0 --> ridge
+#alpha = 1 --> lasso
+
+grid <- 10^seq(10, -2, length=100)
+model.ridge <- glmnet(x, y, alpha=0, lambda=grid, standardize=TRUE)
+
+coef(ridge_mod)
+coef(ridge_mod)[,50] #
+
+sqrt(sum(coef(ridge_mod)[-1,50]^2)) # Calculate l2 norm
+predict(model.ridge, s=50, type='coefficients')
+
+index <- sample(c(TRUE, FALSE), nrow(data.all), replace=TRUE, prob=c(0.7, 0.3))
+
+data.train <- data.all[index,]
+data.test <- data.all[!index,]
+
+grid = 10^seq(10, -2, length = 100)
+x.train <- model.matrix(target~., data.train)[,-1]
+x.test <- model.matrix(target~., data.test)[,-1]
+y.train <- data.train %>% select(target) %>% unlist() %>% as.numeric()
+y.train <- data.test %>% select(target) %>% unlist() %>% as.numeric()
+
+model.fit = glmnet(x.train, y.train, alpha=0, lambda = grid, thresh = 1e-12)
+model.pred <- predict(model.fit, s=50, type="coefficients")
+model.pred <- predict(model.fit, s=4, newx=x.test, )
+mean((model.pred - y.test)^2)
+## [1] 139858.6
+
+# Test set MSE
+model.pred = predict(model.fit, s=1e10, newx=x.test)
+mean((model.pred - y.test)^2)
+## [1] 224692.1
+
+model.pred = predict(model.fit, s=0, x=x.train, y=y.train, newx=x.test, exact=T)
+mean((ridge_pred - y_test)^2)
+## [1] 175051.7
+
+
+cv.out = cv.glmnet(x_train, y_train, alpha = 0) # Fit ridge regression model on training data
+plot(cv.out) # Draw plot of training MSE as a function of lambda
+bestlam = cv.out$lambda.min  # Select lamda that minimizes training MSE
+bestlam
+
+ridge_pred = predict(ridge_mod, s = bestlam, newx = x_test) # Use best lambda to predict test data
+mean((ridge_pred - y_test)^2) # Calculate test MSE
+
+out = glmnet(x, y, alpha = 0) # Fit ridge regression model on full dataset
+predict(out, type="coefficients", s=bestlam)[1:20,] # Display coefficients using lambda chosen by CV
+
+
+
+lasso_mod = glmnet(x_train, y_train, alpha = 1, lambda = grid)  # Fit lasso model on training data
+plot(lasso_mod)                                                 # Draw plot of coefficients
+
+set.seed(1)
+cv.out = cv.glmnet(x_train, y_train, alpha = 1) # Fit lasso model on training data
+plot(cv.out) # Draw plot of training MSE as a function of lambda
+bestlam = cv.out$lambda.min # Select lamda that minimizes training MSE
+lasso_pred = predict(lasso_mod, s = bestlam, newx = x_test) # Use best lambda to predict test data
+mean((lasso_pred - y_test)^2) # Calculate test MSE
+
+# However, the lasso has a substantial advantage over ridge regression in that the resulting coefficient estimates are sparse.
+out = glmnet(x, y, alpha = 1, lambda = grid) # Fit lasso model on full dataset
+lasso_coef = predict(out, type = "coefficients", s = bestlam)[1:20,] # Display coefficients using lambda chosen by CV
+lasso_coef
+
+lasso_coef[lasso_coef!=0] # Display only non-zero coefficients
+```
+
+
+# Decision Trees
+
+Decision trees can be used for either classification or regression problems. The model structure is a series of yes/no questions. Depending on how each observation answers these questions, a prediction is made.
+
+**The below example shows how a single tree can predict health claims:**
+
+* For non-smokers, the predicted annual claims are 8,434. This represents 80% of the observations
+* For smokers with a bmi of less than 30, the predicted annual claims are 21,000. 10% of patients fall into this bucket.
+* For smokers with a bmi of more than 30, the prediction is 42,000. This bucket accounts for 11% of patients.
+
+**Step 2: Continue doing this until a stopping criterion is reached. For example, the minimum number of observations is 5 or less.**
+```{r}
+library(rpart)
+
+tree <- rpart(formula = charges ~  ., data = health_insurance,
+              control = rpart.control(cp = 0.003))
+rpart.plot(tree, type = 3)
+```
+
+**Step 3: Apply cost complexity pruning to simplify the tree**
+
+
+**Step 4: Use cross-validation to select the best alpha**
+```{r}
+tree <- rpart(formula = charges ~  ., data = health_insurance,
+              control = rpart.control(cp = 0.0001))
+cost <- tree$cptable %>% 
+  as_tibble() %>% 
+  select(nsplit, CP, xerror) 
+  
+## # A tibble: 6 × 3
+##   nsplit      CP xerror
+##    <dbl>   <dbl>  <dbl>
+## 1      0 0.620    1.00 
+## 2      1 0.144    0.382
+## 3      2 0.0637   0.238
+## 4      3 0.00967  0.175
+## 5      4 0.00784  0.169
+## 6      5 0.00712  0.163 
+```
+
+# Prune using opitmal cp
+```{r}
+tree$cptable %>% 
+  as_tibble() %>% 
+  select(nsplit, CP, xerror, `rel error`) %>% 
+  head()
+```
+```{r}
+pruned_tree <- prune(tree, cp = tree$cptable[which.min(tree$cptable[, "xerror"]), "CP"])
+```
+
+
+```{r}
+library(caret)
+set.seed(42)
+index <- createDataPartition(y = health_insurance$charges, 
+                             p = 0.8, list = F)
+train <- health_insurance %>% slice(index)
+test <- health_insurance %>% slice(-index)
+
+simple_tree <- rpart(formula = charges ~  ., 
+              data = train,
+              control = rpart.control(cp = 0.0001, 
+                                      minbucket = 200,
+                                      maxdepth = 10))
+rpart.plot(simple_tree, type = 3)
+```
+
+
+## Random Forest
+
+```{r}
+rf_data <- health_insurance %>% 
+  sample_frac(0.2) %>% 
+  mutate(sex = ifelse(sex == "male", 1, 0),
+         smoker = ifelse(smoker == "yes", 1, 0),
+         region_ne = ifelse(region == "northeast", 1,0),
+         region_nw = ifelse(region == "northwest", 1,0),
+         region_se = ifelse(region == "southeast", 1,0),
+         region_sw = ifelse(region == "southwest", 1,0)) %>% 
+  select(-region)
+rf_data %>% glimpse(50)
+
+## Rows: 268
+## Columns: 10
+## $ age       <dbl> 42, 44, 31, 36, 64, 28, 45, 27…
+## $ sex       <dbl> 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, …
+## $ bmi       <dbl> 26.125, 39.520, 27.645, 34.430…
+## $ children  <dbl> 2, 0, 2, 2, 0, 3, 0, 0, 0, 0, …
+## $ smoker    <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, …
+## $ charges   <dbl> 7729.646, 6948.701, 5031.270, …
+## $ region_ne <dbl> 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, …
+## $ region_nw <dbl> 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, …
+## $ region_se <dbl> 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, …
+## $ region_sw <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+```
+
+```{r}
+library(caret)
+set.seed(42)
+index <- createDataPartition(y = rf_data$charges, p = 0.8, list = F)
+train <- rf_data %>% slice(index)
+test <- rf_data %>% slice(-index)
+
+rf <- randomForest(charges ~ ., data = train, ntree = 400)
+plot(rf)
+
+varImpPlot(x = rf)
+
+# smoker, bmi, and age are the most important predictors of charges
+```
+
+```
+pred <- predict(rf, test)
+get_rmsle <- function(y, y_hat){
+  sqrt(mean((log(y) - log(y_hat))^2))
+}
+
+get_rmsle(test$charges, pred)
+## [1] 0.5252518
+```
+
+```{r}
+
+get_rmsle(test$charges, mean(train$charges))
+## [1] 1.118947
+
+```
+**Partial Dependency Plot: This attempts to measure the change in the predicted value by taking the average $y_hat$ after removing the effects of all other predictors.**
+```{r}
+library(pdp)
+
+bmi <- pdp::partial(rf, pred.var = "bmi",  grid.resolution = 15) %>% 
+  autoplot() + theme_bw()
+age <- pdp::partial(rf, pred.var = "age",  grid.resolution = 15) %>% 
+  autoplot() + theme_bw()
+ggarrange(bmi, age)
+
+```
+
+## Gradiant Boosting Model
+```{r}
+library(gbm)
+gbm <- gbm(charges ~ ., data = train,
+           # Boosting Parameters
+           n.trees = 100,
+           shrinkage = 0.1,
+           # Tree Parameters
+           interaction.depth = 2,
+           n.minobsinnode = 50)
+           
+pred <- predict(gbm, test, n.trees = 100)
+get_rmsle(test$charges, pred)
+get_rmsle(test$charges, mean(train$charges))
+```
+
+```{r}
+set.seed(42)
+#Take only 250 records 
+#Uncomment this when completing this exercise
+data <- health_insurance %>% sample_n(250) 
+
+index <- createDataPartition(
+  y = data$charges, p = 0.8, list = F) %>% 
+  as.numeric()
+train <-  health_insurance %>% slice(index)
+test <- health_insurance %>% slice(-index)
+
+control <- trainControl(
+  method='boot', 
+  number=2, 
+  p = 0.2)
+
+tunegrid <- expand.grid(.mtry=c(1,3,5))
+rf <- train(charges ~ .,
+            data = train,
+            method='rf', 
+            tuneGrid=tunegrid, 
+            trControl=control)
+
+pred_train <- predict(rf, train)
+pred_test <- predict(rf, test)
+
+get_rmse <- function(y, y_hat){
+  sqrt(mean((y - y_hat)^2))
+}
+
+get_rmse(pred_train, train$charges)
+get_rmse(pred_test, test$charges)
+```
+
+### Boosting with Caret
+```{r}
+library(caret)
+set.seed(42)
+index <- createDataPartition(y = health_insurance$charges, 
+                             p = 0.8, list = F)
+#To make this run faster, only take 50% sample
+df <- health_insurance %>% sample_frac(0.50) 
+train <- df %>% slice(index) 
+test <- df %>% sample_frac(0.05)%>% slice(-index)
+
+tunegrid <- expand.grid(
+    interaction.depth = c(1,5, 10),
+    n.trees = c(50, 100, 200, 300, 400), 
+    shrinkage = c(0.5, 0.1, 0.0001),
+    n.minobsinnode = c(5, 30, 100)
+    )
+nrow(tunegrid)
+
+control <- trainControl(
+  method='repeatedcv', 
+  number=5, 
+  p = 0.8)
+
+gbm <- train(charges ~ .,
+            data = train,
+            method='gbm', 
+            tuneGrid=tunegrid, 
+            trControl=control,
+            #Show detailed output
+            verbose = FALSE
+            )
+
+results <- gbm$results %>% arrange(RMSE)
+top_result <- results %>% slice(1)%>% mutate(param_rank = 1)
+tenth_result <- results %>% slice(10)%>% mutate(param_rank = 10)
+twenty_seventh_result <- results %>% slice(135)%>% mutate(param_rank = 135)
+
+rbind(top_result, tenth_result, twenty_seventh_result) %>% 
+  select(param_rank, 1:5)
+  
+ pdp::partial(gbm, pred.var = "bmi", grid.resolution = 15, plot = T)
+ pdp::partial(gbm, pred.var = "bmi", grid.resolution = 20, plot = T, ice = T, alpha = 0.1, palette = "viridis")
+ 
+```
+
+## Principle Component Analysis
+```{r}
+
+pca = prcomp(USArrests, scale=TRUE)
+names(pca)
+
+#The center and scale components correspond to the means and standard deviations of the variables that were used for scaling prior to implementing PCA:
+pca$center
+pca$scale
+
+# The rotation matrix provides the principal component loadings; each column of pr.out$rotation contains the corresponding principal component loading vector:
+pca$rotation
+
+# This is to be expected because there are in general min(n − 1, p) informative principal components in a data set with n observations and p variables.
+head(pca$x)
+
+biplot(pca, scale=0)
+
+pca$sdev
+pca_var=pca$sdev^2
+pve=pca_var/sum(pca_var)
+plot(pve, xlab="Principal Component", ylab="Proportion of Variance Explained", ylim=c(0,1),type='b')
+
+plot(cumsum(pve), xlab="Principal Component", ylab="Cumulative Proportion of Variance Explained", ylim=c(0,1),type='b')
 
 
 ```
