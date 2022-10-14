@@ -34,7 +34,50 @@
   1.1 [Ordinary Least Squares](#ordinary-least-squares)  
 2. [Decision Trees](#decision-trees)  
   2.1 [Regression Trees](#regression-trees)  
-3. [Cluster Analysis](#cluster-analysis)  
+3. [Cluster and Principal Component Analyses](#cluster-analysis)  
+
+---
+
+### Project Definition Framework
+> Appendix A demonstrates concepts and methodologies for effective problem definition and project management.
+
+#### Define
+After reading the sample project, formulate a concise project statement that will guide the analyses you will eventually perform.
+
+Project Statement: Determine factors that will relate consumer decisions to buy term life insurance and for those who do, the amount purchased. Selected factors should be able to be used by the marketing department to better target their sales efforts.
+
+Note: This statement implies that the models selected will be used to provide marketing insights, not predictions. That is, the use won’t be “input characteristics of a potential customer to see if we want to contact that person”, but rather, “target advertising to these groups of people because they are more likely to purchase term insurance”.
+
+> Example: “Using internal data available on agents and policyholders, we can identify particular agents or attributes of policyholders that lead to them being more likely to lapse within the first two years of the policy. This will allow us to pinpoint at the time of quote which customers will be more expensive and can drive better underwriting decisions leading to an overall decrease in the costs associated with early lapse. We aim to reduce the duration 1 lapse rate from 22% to 14% and increase the pricing IRR from 10% to 12%.”
+
+#### Evaluate and Prioritize
+Examine the feasibility of the proposed solutions – is it possible and what are the constraints?  
+*	Implementation constraints (data, resources, experience vs. timelines) 
+*	Regulatory acceptance 
+*	Consumer acceptance 
+*	Potential for gaming
+*	Cost/effort
+
+**Implementation Constraints (Data, Resources, Experience vs. Timelines)**  
+The following are potential concerns regarding the data available for us:  
+1.	Partial Data: If the data that you have has been used before for other modeling tasks and you have been in contact with the team responsible, you can be relatively assured of the quality of the data. If the data has not been used for this purpose before, you cannot be certain of the quality of the data and may be forced to rely upon the most recent period or two.
+2.	Old Data: If data exists across multiple legacy databases, any exercises that required modeling all datasets would require a significant data matching exercise and coordination between different parts of the business.
+3.	Restricted Data: Personal data may be restricted if information may not be used in analysis
+4.	Unverifiable Data:  Cannot be certain of quality of data and may be forced to rely upon data for most recent periods only.
+
+**Other Considerations:**
+*	 **Regulatory Acceptance:** Although not involved directly, the regulator is an important stakeholder in the analytics decision-making process. The business should consider how the regulator will react (either in-light of explicit guidance or from a principal’s perspective) to the predictive analytics solution being proposed.
+*	 **Consumer Acceptance:** Customers may be directly involved or exposed to changes brought about by the predictive analytics project, either through direct communication or a change in the way they interact with existing products or services.
+*	 **Potential for Gaming:** In particular, does the solution treat individuals with certain behaviors or characteristics more favorably than others? Is it possible for someone to change their behavior to achieve a better rate or outcome?
+* 	**Required Cost and Effort:** If the cost and effort are too high given the expected return, both in the context of implementation, maintenance, and initial project itself, then it isn’t worth doing. Effort and cost determine whether you will undertake a project and will constrain the way you implement. This is one reason it is important to understand the effort and cost up front.
+
+#### Prepare
+Assess key ingredients missing from current analytical setup which need to be readied prior to project execution:  
+*	 Data: Determine when and how can data (signed-off during the prioritize stage) be accessed, additional technology needed. 
+*	 Internal Communication: Perform project setup tasks, engage staff, and form a dynamic business + project team.
+*	 Stakeholder Interviews: Determine what information the stakeholders will need regarding progress of the project and when.
+* 	SMEs: Determine whether external SMEs are needed to guide aspects of the analytics.
+
 
 
 ---
