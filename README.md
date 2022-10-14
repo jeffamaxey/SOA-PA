@@ -169,6 +169,9 @@ The generalized assumptions are:
   > 
   > Where g is called the **link function**
 
+If the conditional distribution of the target variable is normal (member of exponential) and the link function is simply $g(\mu) = \mu$, we have the ordinary regression model.
+
+
 ---
 
 ## 2. Decision Trees[![](./docs/img/pin.svg)](#decision-trees)
