@@ -19,7 +19,7 @@
 
 -----
 
-## Introduction[![]()](#introduction) ⚡️ ⚙️ 📖
+## Introduction[![]()](#introduction) ⚡️ ⚙️ 📖 💡 
 
 **SOA PA** is a guide to predictive analytics in R. 
 
@@ -37,6 +37,7 @@
 
 ## 1. Generalized Linear Models[![](./docs/img/pin.svg)](#generalized-linear-models)
 
+> 💡 In current version, the AREG engine handles multithreading (_Local_) and multiprocessing (_Public_) communication. 
 
 
 ---
