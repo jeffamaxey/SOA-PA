@@ -1,10 +1,11 @@
+# Predictive Analytics in R
 
 <div align="center">
-<h1 align="center" style="display: block; font-size: 2.5em; font-weight: bold; margin-block-start: 1em; margin-block-end: 1em;">
+<!-- <h1 align="center" style="display: block; font-size: 2.5em; font-weight: bold; margin-block-start: 1em; margin-block-end: 1em;">
 </a>
  <br><strong>Predictive Analytics in R</strong></br>
 </h1>  
-
+ -->
 <img src="https://cdn3.iconfinder.com/data/icons/product-management-color/64/metric-analytic-analysis-statistic-data-presentation-512.png" alt="Hatch logo" width="250" role="img">
 
 
