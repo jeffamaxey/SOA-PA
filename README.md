@@ -1,11 +1,12 @@
-# Hatch
-
-![alt text](data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAyMjUzIDIyNTAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM6c2VyaWY9Imh0dHA6Ly93d3cuc2VyaWYuY29tLyIgc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxLjU7Ij48cmVjdCBpZD0iSGVhdG1hcCIgeD0iMS45OTciIHk9IjAiIHdpZHRoPSIyMjUwIiBoZWlnaHQ9IjIyNTAiIHN0eWxlPSJmaWxsOm5vbmU7Ii8+PHJlY3QgeD0iMTM1LjMzMSIgeT0iMTMzLjMzMyIgd2lkdGg9IjQ5NS44MzMiIGhlaWdodD0iNDk1LjgzMyIgc3R5bGU9ImZpbGw6IzFjNGU4MDtzdHJva2U6IzIwMjAyMDtzdHJva2Utd2lkdGg6NjYuNjdweDsiLz48cmVjdCB4PSI2MzEuMTY0IiB5PSIxMzMuMzMzIiB3aWR0aD0iNDk1LjgzMyIgaGVpZ2h0PSI0OTUuODMzIiBzdHlsZT0iZmlsbDojMWM0ZTgwO3N0cm9rZTojMjAyMDIwO3N0cm9rZS13aWR0aDo2Ni42N3B4OyIvPjxyZWN0IHg9IjExMjciIHk9IjEzMy4zMzMiIHdpZHRoPSI0OTUuODMzIiBoZWlnaHQ9IjQ5NS44MzMiIHN0eWxlPSJmaWxsOiNlZWU7c3Ryb2tlOiMyMDIwMjA7c3Ryb2tlLXdpZHRoOjY2LjY3cHg7Ii8+PHJlY3QgeD0iMTYyMi44MyIgeT0iMTMzLjMzMyIgd2lkdGg9IjQ5NS44MzMiIGhlaWdodD0iNDk1LjgzMyIgc3R5bGU9ImZpbGw6I2VhNmE0NztzdHJva2U6IzIwMjAyMDtzdHJva2Utd2lkdGg6NjYuNjdweDsiLz48cmVjdCB4PSIxMzUuMzMxIiB5PSI2MjkuMTY3IiB3aWR0aD0iNDk1LjgzMyIgaGVpZ2h0PSI0OTUuODMzIiBzdHlsZT0iZmlsbDojMWM0ZTgwO3N0cm9rZTojMjAyMDIwO3N0cm9rZS13aWR0aDo2Ni42N3B4OyIvPjxyZWN0IHg9IjEzNS4zMzEiIHk9IjExMjUiIHdpZHRoPSI0OTUuODMzIiBoZWlnaHQ9IjQ5NS44MzMiIHN0eWxlPSJmaWxsOiNlZWU7c3Ryb2tlOiMyMDIwMjA7c3Ryb2tlLXdpZHRoOjY2LjY3cHg7Ii8+PHJlY3QgeD0iMTM1LjMzMSIgeT0iMTYyMC44MyIgd2lkdGg9IjQ5NS44MzMiIGhlaWdodD0iNDk1LjgzMyIgc3R5bGU9ImZpbGw6I2VlZTtzdHJva2U6IzIwMjAyMDtzdHJva2Utd2lkdGg6NjYuNjdweDsiLz48cmVjdCB4PSI2MzEuMTY0IiB5PSI2MjkuMTY3IiB3aWR0aD0iNDk1LjgzMyIgaGVpZ2h0PSI0OTUuODMzIiBzdHlsZT0iZmlsbDojZWVlO3N0cm9rZTojMjAyMDIwO3N0cm9rZS13aWR0aDo2Ni42N3B4OyIvPjxyZWN0IHg9IjYzMS4xNjQiIHk9IjExMjUiIHdpZHRoPSI0OTUuODMzIiBoZWlnaHQ9IjQ5NS44MzMiIHN0eWxlPSJmaWxsOiNlZWU7c3Ryb2tlOiMyMDIwMjA7c3Ryb2tlLXdpZHRoOjY2LjY3cHg7Ii8+PHJlY3QgeD0iNjMxLjE2NCIgeT0iMTYyMC44MyIgd2lkdGg9IjQ5NS44MzMiIGhlaWdodD0iNDk1LjgzMyIgc3R5bGU9ImZpbGw6I2VlZTtzdHJva2U6IzIwMjAyMDtzdHJva2Utd2lkdGg6NjYuNjdweDsiLz48cmVjdCB4PSIxMTI3IiB5PSI2MjkuMTY3IiB3aWR0aD0iNDk1LjgzMyIgaGVpZ2h0PSI0OTUuODMzIiBzdHlsZT0iZmlsbDojZWVlO3N0cm9rZTojMjAyMDIwO3N0cm9rZS13aWR0aDo2Ni42N3B4OyIvPjxyZWN0IHg9IjExMjciIHk9IjExMjUiIHdpZHRoPSI0OTUuODMzIiBoZWlnaHQ9IjQ5NS44MzMiIHN0eWxlPSJmaWxsOiNlZWU7c3Ryb2tlOiMyMDIwMjA7c3Ryb2tlLXdpZHRoOjY2LjY3cHg7Ii8+PHJlY3QgeD0iMTEyNyIgeT0iMTYyMC44MyIgd2lkdGg9IjQ5NS44MzMiIGhlaWdodD0iNDk1LjgzMyIgc3R5bGU9ImZpbGw6I2VhNmE0NztzdHJva2U6IzIwMjAyMDtzdHJva2Utd2lkdGg6NjYuNjdweDsiLz48cmVjdCB4PSIxNjIyLjgzIiB5PSI2MjkuMTY3IiB3aWR0aD0iNDk1LjgzMyIgaGVpZ2h0PSI0OTUuODMzIiBzdHlsZT0iZmlsbDojZWE2YTQ3O3N0cm9rZTojMjAyMDIwO3N0cm9rZS13aWR0aDo2Ni42N3B4OyIvPjxyZWN0IHg9IjE2MjIuODMiIHk9IjExMjUiIHdpZHRoPSI0OTUuODMzIiBoZWlnaHQ9IjQ5NS44MzMiIHN0eWxlPSJmaWxsOiNlYTZhNDc7c3Ryb2tlOiMyMDIwMjA7c3Ryb2tlLXdpZHRoOjY2LjY3cHg7Ii8+PHJlY3QgeD0iMTYyMi44MyIgeT0iMTYyMC44MyIgd2lkdGg9IjQ5NS44MzMiIGhlaWdodD0iNDk1LjgzMyIgc3R5bGU9ImZpbGw6I2VhNmE0NztzdHJva2U6IzIwMjAyMDtzdHJva2Utd2lkdGg6NjYuNjdweDsiLz48L3N2Zz4= "title")
-
 
 <div align="center">
+<h1 align="center" style="display: block; font-size: 2.5em; font-weight: bold; margin-block-start: 1em; margin-block-end: 1em;">
+</a>
+ <br><strong>Predictive Analytics in R</strong></br>
+</h1>  
 
-<img src="https://raw.githubusercontent.com/pypa/hatch/master/docs/assets/images/logo.svg" alt="Hatch logo" width="500" role="img">
+<img src="https://cdn3.iconfinder.com/data/icons/product-management-color/64/metric-analytic-analysis-statistic-data-presentation-512.png" alt="Hatch logo" width="250" role="img">
+
 
 | | |
 | --- | --- |
@@ -18,21 +19,40 @@
 
 -----
 
-Hatch is a modern, extensible Python project manager.
+## Introduction[![]()](#introduction) ⚡️ ⚙️ 📖
 
-## Features
+**SOA PA** is a guide to predictive analytics in R. 
 
-- Standardized [build system](https://hatch.pypa.io/latest/build/#packaging-ecosystem) with reproducible builds by default
-- Robust [environment management](https://hatch.pypa.io/latest/environment/) with support for custom scripts
-- Easy [publishing](https://hatch.pypa.io/latest/publish/) to PyPI or other sources
-- [Version](https://hatch.pypa.io/latest/version/) management
-- Configurable [project generation](https://hatch.pypa.io/latest/config/project-templates/) with sane defaults
-- Responsive [CLI](https://hatch.pypa.io/latest/cli/about/), ~2-3x [faster](https://github.com/pypa/hatch/blob/hatch-v1.5.0/.github/workflows/test.yml#L76-L108) than equivalent tools
+---
+
+## Table of contents[![](./docs/img/pin.svg)](#table-of-contents)
+1. [Generalized Linear Models](#generalized-linear-models)  
+  1.1 [Ordinary Least Squares](#ordinary-least-squares)  
+2. [Decision Trees](#decision-trees)  
+  2.1 [Regression Trees](#regression-trees)  
+3. [Cluster Analysis](#cluster-analysis)  
+
+
+---
+
+## 1. Generalized Linear Models[![](./docs/img/pin.svg)](#generalized-linear-models)
+
+
+
+---
+
+## 2. Decision Trees[![](./docs/img/pin.svg)](#decision-trees)
+
+> 💡 In current version, the AREG engine handles multithreading (_Local_) and multiprocessing (_Public_) communication. 
+
+
+
+---
 
 ## Documentation
 
-The [documentation](https://hatch.pypa.io/) is made with [Material for MkDocs](https://github.com/squidfunk/mkdocs-material) and is hosted by [GitHub Pages](https://docs.github.com/en/pages).
+The [documentation]() is made with [Material for MkDocs](https://github.com/squidfunk/mkdocs-material) and is hosted by [GitHub Pages](https://docs.github.com/en/pages).
 
 ## License
 
-Hatch is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+SOA-PA is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
